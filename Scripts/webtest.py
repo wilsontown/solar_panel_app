@@ -7,9 +7,7 @@ from tensorflow.keras.layers import Lambda, Conv2D, BatchNormalization, MaxPooli
 from tensorflow.keras.metrics import IoU, BinaryIoU
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import keras.backend as K
-import cv2 as cv
 from skimage import io
-import matplotlib.pyplot as plt
 import googlemaps
 from datetime import datetime
 import os.path
@@ -138,51 +136,56 @@ def predict_mask (model, file, input_size):
 model = build_unet(256, 256, 3)
 model.load_weights('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/model_weights/loss_sum_trainingset')
 
-tab1, tab2 = st.tabs(['From file', 'From web'])
+tab1, tab2 = st.tabs(['From file', 'From googlemaps'])
 
+try:
 
-st.sidebar.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/logo.png')
-st.sidebar.markdown("""<span style="word-wrap:break-word;">Building footprint identification from satellite images""", unsafe_allow_html=True)
+    st.sidebar.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/logo.png')
+    st.sidebar.markdown("""<span style="word-wrap:break-word;">Building footprint identification from satellite images""", unsafe_allow_html=True)
 
-with tab1:
-    st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
-    st.title('Solar panel segmentation')
-    testfile = st.file_uploader('Select an image file', type=['png', 'jpg', 'tif'])
+    with tab1:
+        st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
+        st.title('Solar panel segmentation')
+        testfile = st.file_uploader('Please select a satellite image', type=['png', 'jpg', 'tif'])
 
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
-    if testfile is not None:
-        col1.image(testfile)
+        if testfile is not None:
+            col1.image(testfile)
 
-    result = predict_mask(model, testfile, 256)
+            result = predict_mask(model, testfile, 256)
 
-    percent = (np.sum(result) / (4864 * 4864)) * 100
-    percent = round(percent, 1)
-    area = np.sum(result) * (0.3 * 0.3)
-    area = round(area)
+            percent = (np.sum(result) / (4864 * 4864)) * 100
+            percent = round(percent, 1)
+            area = np.sum(result) * (0.3 * 0.3)
+            area = round(area)
 
-    col2.image(result)
+            col2.image(result)
 
-    #col2.subheader('Roof area statistics')
-    col2.text(f'Percentage roofspace: {percent} %')
-    col2.text(f'Roofspace area: {area} m^2')
+            col2.text(f'Percentage roofspace: {percent} %')
+            col2.text(f'Roofspace area: {area} m^2')
 
-with tab2:
-    st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
-    st.title('Solar panel segmentation')
+    with tab2:
+        st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
+        st.title('Solar panel segmentation')
 
-    place = st.text_input("Please enter a location")
-    geocode_result = gmaps.geocode(place)
+        place = st.text_input("Please enter a location (e.g. an address or a city)")
 
-    lat = geocode_result[0]['geometry']['location']['lat']
-    lon = geocode_result[0]['geometry']['location']['lng']
+        if place is not None:
+            geocode_result = gmaps.geocode(place)
 
-    sat = f'https://maps.googleapis.com/maps/api/staticmap?center={lat},{lon}&format=jpg&zoom=18&size=640x640&scale=2&maptype=satellite&key={password}'
+            lat = geocode_result[0]['geometry']['location']['lat']
+            lon = geocode_result[0]['geometry']['location']['lng']
 
-    col1, col2 = st.columns(2)
+            sat = f'https://maps.googleapis.com/maps/api/staticmap?center={lat},{lon}&format=jpg&zoom=17&size=640x640&scale=2&maptype=satellite&key={password}'
 
-    col1.image(sat)
+            col1, col2 = st.columns(2)
 
-    mask = predict_mask(model, sat, 256)
+            col1.image(sat)
 
-    col2.image(mask)
+            mask = predict_mask(model, sat, 256)
+
+            col2.image(mask)
+
+except:
+    pass
