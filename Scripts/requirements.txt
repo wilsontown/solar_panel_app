@@ -4,3 +4,4 @@ streamlit==1.15.2
 keras==2.8.0
 scikit-image==0.19.1
 googlemaps
+python-dotenv
