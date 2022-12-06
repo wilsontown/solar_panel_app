@@ -140,11 +140,11 @@ tab1, tab2 = st.tabs(['From file', 'From googlemaps'])
 
 try:
 
-    st.sidebar.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/logo.png')
+    st.sidebar.image('Images/logo.png')
     st.sidebar.markdown("""<span style="word-wrap:break-word;">Building footprint identification from satellite images""", unsafe_allow_html=True)
 
     with tab1:
-        st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
+        st.image('Images/banner.png')
         st.title('Solar panel segmentation')
         testfile = st.file_uploader('Please select a satellite image', type=['png', 'jpg', 'tif'])
 
@@ -166,7 +166,7 @@ try:
             col2.text(f'Roofspace area: {area} m^2')
 
     with tab2:
-        st.image('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/raw_data/banner.png')
+        st.image('Images/banner.png')
         st.title('Solar panel segmentation')
 
         place = st.text_input("Please enter a location (e.g. an address or a city)")
