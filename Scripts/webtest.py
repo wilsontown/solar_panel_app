@@ -10,7 +10,7 @@ import keras.backend as K
 from skimage import io
 import googlemaps
 from datetime import datetime
-import os.path
+import os
 from dotenv import load_dotenv, find_dotenv
 
 env_path = load_dotenv()
@@ -134,7 +134,8 @@ def predict_mask (model, file, input_size):
     return reconstruction
 
 model = build_unet(256, 256, 3)
-model.load_weights('/home/wilsontown/code/areisdorf45/solar_panel_segmentation/model_weights/loss_sum_trainingset')
+model_weights_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "model_weights", "loss_sum_trainingset")
+model.load_weights(model_weights_path)
 
 tab1, tab2 = st.tabs(['From file', 'From googlemaps'])
 
