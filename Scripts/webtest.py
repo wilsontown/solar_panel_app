@@ -156,15 +156,12 @@ try:
 
             result = predict_mask(model, testfile, 256)
 
-            percent = (np.sum(result) / (4864 * 4864)) * 100
+            percent = (np.sum(result) / (result.shape[0] * result.shape[1])) * 100
             percent = round(percent, 1)
-            area = np.sum(result) * (0.3 * 0.3)
-            area = round(area)
 
             col2.image(result)
 
             col2.text(f'Percentage roofspace: {percent} %')
-            col2.text(f'Roofspace area: {area} m^2')
 
     with tab2:
         st.image('Images/banner.png')
@@ -186,7 +183,11 @@ try:
 
             mask = predict_mask(model, sat, 256)
 
+            percent = (np.sum(mask) / (mask.shape[0] * mask.shape[1])) * 100
+            percent = round(percent, 1)
+
             col2.image(mask)
+            col2.text(f'Percentage roofspace: {percent} %')
 
 except:
     pass
