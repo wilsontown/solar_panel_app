@@ -86,13 +86,12 @@ def build_unet(img_height, img_width, channels):
 
     return model
 
-
+@st.cache
 def predict_mask (model, file, input_size):
     image = io.imread(file)
     image = image[:, :, :3]
     height = image.shape[0]
     width = image.shape[1]
-
 
     if height % input_size == 0:
         y_indices = np.arange(0, height, input_size)
@@ -147,6 +146,7 @@ try:
     with tab1:
         st.image('Images/banner.png')
         st.title('Solar panel segmentation')
+
         testfile = st.file_uploader('Please select a satellite image', type=['png', 'jpg', 'tif'])
 
         col1, col2 = st.columns(2)
@@ -155,11 +155,7 @@ try:
             col1.image(testfile)
 
             with st.spinner(text="Looking for roofs for you..."):
-
                 result = predict_mask(model, testfile, 256)
-
-            st.snow()
-            #result = predict_mask(model, testfile, 256)
 
             percent = (np.sum(result) / (4864 * 4864)) * 100
             percent = round(percent, 1)
@@ -189,7 +185,8 @@ try:
 
             col1.image(sat)
 
-            mask = predict_mask(model, sat, 256)
+            with st.spinner(text="Looking for roofs for you..."):
+                result = predict_mask(model, testfile, 256)
 
             col2.image(mask)
 
