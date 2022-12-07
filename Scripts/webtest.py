@@ -154,8 +154,7 @@ try:
         if testfile is not None:
             col1.image(testfile)
 
-            with st.spinner(text="Looking for roofs for you..."):
-                result = predict_mask(model, testfile, 256)
+            result = predict_mask(model, testfile, 256)
 
             percent = (np.sum(result) / (4864 * 4864)) * 100
             percent = round(percent, 1)
@@ -185,8 +184,7 @@ try:
 
             col1.image(sat)
 
-            with st.spinner(text="Looking for roofs for you..."):
-                result = predict_mask(model, testfile, 256)
+            mask = predict_mask(model, sat, 256)
 
             col2.image(mask)
 
